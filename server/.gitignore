@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+
+# environment variables
+.env
+.env.local
+
+# logs
+*.log
+
+# coverage/test outputs
+coverage/
