@@ -212,13 +212,6 @@ export default function Room() {
 
   return (
     <div style={{ padding: "2rem" }}>
-      <div>
-        <button onClick={() => socket.emit("indexTest", { roomId })}>
-          Test event
-        </button>
-        {testFlag && <p>This should hide or show</p>}
-      </div>
-
       <h2>Room ID: {roomId}</h2>
       <h3>User: {state.username}</h3>
 
