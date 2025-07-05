@@ -1,7 +1,7 @@
 const { createDeck, shuffle } = require("../utils/deckUtils");
-// const { rooms } = require("../state/roomStore");
+const { rooms } = require("../state/roomStore");
 
-function startGame(io, rooms, roomId) {
+function startGame(io, roomId) {
   console.log("🚀 Starting game in room ", roomId);
   const room = rooms[roomId];
   if (!room) return;
@@ -51,7 +51,7 @@ function startGame(io, rooms, roomId) {
   );
 }
 
-function restartRound(io, rooms, roomId) {
+function restartRound(io, roomId) {
   const room = rooms[roomId];
   if (!room) return;
 
@@ -70,7 +70,7 @@ function restartRound(io, rooms, roomId) {
   io.to(roomId).emit("round-restarting");
 
   // ✅ Start game immediately
-  startGame(io, rooms, roomId);
+  startGame(io, roomId);
 }
 
 module.exports = { startGame, restartRound };

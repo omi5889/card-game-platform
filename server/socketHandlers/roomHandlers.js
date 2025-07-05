@@ -1,5 +1,27 @@
-function createRoom() {}
-function joinRoom(socket, io, rooms, roomId, username, callback) {
+const { rooms } = require("../state/roomStore");
+
+function createRoom(gameType, roundTarget, callback) {
+  const roomId = Math.random().toString(36).substring(2, 6);
+  rooms[roomId] = {
+    gameType,
+    players: [],
+    roundTarget: roundTarget || 5, // Default to best of 5
+    trickCount: 0,
+    teamTens: [0, 0], // Team 0 and Team 1
+    teamTricks: [0, 0], // Team 0 and Team 1
+    trumpSuit: null,
+    trick: [],
+    deck: null,
+    trumpChooserIndex: 0, // Index of player who chooses trump
+    currentTurn: 0, // Index of current player in room.players
+    trickLeader: 0, // Index of player who leads the trick
+    roundsWon: [0, 0], // Team 0, Team 1 rounds won
+    hands: {}, // Player hands will be stored here
+  };
+  callback({ roomId });
+  console.log(`✅ Room created: ${roomId} (${gameType})`);
+}
+function joinRoom(socket, io, roomId, username, callback) {
   const room = rooms[roomId];
   if (!room) return callback({ error: "Room not found" });
   if (room.players.length >= 4) return callback({ error: "Room is full" });
@@ -15,7 +37,7 @@ function joinRoom(socket, io, rooms, roomId, username, callback) {
   io.to(roomId).emit("room-update", room.players);
   callback({ success: true, players: room.players });
 }
-function leaveRoom(socket, io, rooms) {
+function leaveRoom(socket, io) {
   console.log(`❌ User disconnected: ${socket.id}`);
   // Remove player from all rooms
   for (const roomId in rooms) {

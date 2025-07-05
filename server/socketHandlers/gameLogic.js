@@ -1,7 +1,7 @@
 const { getSuit, getRank } = require("../utils/cardUtils");
-// const { rooms } = require("../state/roomStore"); // Import rooms from shared state
+const { rooms } = require("../state/roomStore"); // Import rooms from shared state
 
-function playCard(socket, io, rooms, roomId, card) {
+function playCard(socket, io, roomId, card) {
   const room = rooms[roomId];
   if (!room) return;
 
@@ -143,7 +143,7 @@ function playCard(socket, io, rooms, roomId, card) {
   }
 }
 
-function trumpSelected(socket, io, rooms, roomId, suit) {
+function trumpSelected(socket, io, roomId, suit) {
   const room = rooms[roomId];
   if (!room || room.trumpSuit) return;
 
