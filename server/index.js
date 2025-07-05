@@ -64,5 +64,5 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = 3001;
+const { PORT } = require("./config");
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
