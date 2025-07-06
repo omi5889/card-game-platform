@@ -3,6 +3,14 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { socket } from "../socket";
 
+import PlayerList from "../components/PlayerList";
+import Hand from "../components/Hand";
+import TrumpChooser from "../components/TrumpChooser";
+import TrickDisplay from "../components/TrickDisplay";
+import TeamScores from "../components/TeamScores";
+import LastTrickWinner from "../components/LastTrickWinner";
+import RoundResult from "../components/RoundResult";
+
 export default function Room() {
   const { roomId } = useParams();
   const { state } = useLocation();
@@ -215,14 +223,7 @@ export default function Room() {
       <h2>Room ID: {roomId}</h2>
       <h3>User: {state.username}</h3>
 
-      <h3>Players:</h3>
-      <ul>
-        {players.map((p, idx) => (
-          <li key={p.id}>
-            {idx + 1}. {p.username}
-          </li>
-        ))}
-      </ul>
+      <PlayerList players={players} />
 
       {/* Hide Start Game button during active round */}
       {players.length === 4 && !roundResult && (
@@ -245,109 +246,28 @@ export default function Room() {
         </p>
       )}
 
-      <h3>Your Hand:</h3>
-      <div style={{ display: "flex", gap: "8px" }}>
-        {hand.map((card) => (
-          <div
-            key={card}
-            onClick={() => playCard(card)}
-            style={{
-              border: "1px solid black",
-              padding: "8px",
-              cursor: "pointer",
-            }}
-          >
-            {card}
-          </div>
-        ))}
-      </div>
+      <Hand
+        hand={hand}
+        onPlayCard={playCard}
+        isTurn={socket.id === currentTurnId}
+      />
 
       {isTrumpChooser && (
-        <div>
-          <h3>Select Trump Suit</h3>
-          {["S", "H", "D", "C"].map((suit) => (
-            <button
-              key={suit}
-              onClick={() => {
-                socket.emit("trump-selected", { roomId, suit });
-                setIsTrumpChooser(false);
-              }}
-            >
-              {suit}
-            </button>
-          ))}
-        </div>
+        <TrumpChooser
+          roomId={roomId}
+          socket={socket}
+          onSuitSelected={() => setIsTrumpChooser(false)}
+        />
       )}
 
-      <h3>Current Trick:</h3>
-      <ul>
-        {trick.map((t, i) => (
-          <li key={i}>
-            {t.playerName}
-            {t.playerId.slice(0, 4)}: {t.card}
-          </li>
-        ))}
-      </ul>
+      <TrickDisplay trick={trick} />
 
-      <div className="mt-4 text-center">
-        <h3 className="font-bold">Team Scores</h3>
-        <div className="flex justify-center gap-6 text-sm mt-2">
-          <div className="p-2 border rounded bg-blue-50">
-            <div className="font-semibold">Team 0 (Players 0 & 2)</div>
-            <div>Tricks: {teamScores.teamTricks[0]}</div>
-            <div>Tens: {teamScores.teamTens[0]}</div>
-          </div>
-          <div className="p-2 border rounded bg-red-50">
-            <div className="font-semibold">Team 1 (Players 1 & 3)</div>
-            <div>Tricks: {teamScores.teamTricks[1]}</div>
-            <div>Tens: {teamScores.teamTens[1]}</div>
-          </div>
-        </div>
-      </div>
+      <TeamScores teamScores={teamScores} />
 
-      {lastTrickWinner && (
-        <div className="text-center mt-3 text-sm bg-yellow-100 p-2 rounded shadow">
-          <div>
-            🏆 <strong>{lastTrickWinner.winner}</strong> won the last trick with{" "}
-            <strong>{lastTrickWinner.card}</strong>
-          </div>
-          {lastTrickWinner.tensCaptured.length > 0 && (
-            <div className="text-red-600 font-semibold mt-1">
-              🔟 Captured Ten(s):{" "}
-              {lastTrickWinner.tensCaptured.map((ten) => ten.card).join(", ")}
-            </div>
-          )}
-        </div>
-      )}
+      <LastTrickWinner lastTrickWinner={lastTrickWinner} />
 
       {/* Round result summary */}
-      {roundResult && (
-        <div className="mt-4 p-4 bg-green-100 rounded shadow text-center">
-          {roundResult?.result && typeof roundResult.result === "string" && (
-            <h2 className="text-xl font-bold">{roundResult.result}</h2>
-          )}
-          <p className="mt-2 text-sm">
-            Team 0 - Rounds Won: {roundResult.roundsWon[0]}
-            <br />
-            Team 1 - Rounds Won: {roundResult.roundsWon[1]}
-            <br />
-            Target: Best of {roundResult.roundTarget}
-          </p>
-
-          {roundResult.matchComplete ? (
-            <div className="mt-2 text-lg text-red-600 font-semibold">
-              🎉 Team {roundResult.matchWinner} wins the match!
-            </div>
-          ) : (
-            <button
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              onClick={() => socket.emit("restart-round", { roomId })}
-            >
-              🔁 Play Next Round
-            </button>
-          )}
-        </div>
-      )}
+      <RoundResult roomId={roomId} roundResult={roundResult} />
     </div>
   );
 }
