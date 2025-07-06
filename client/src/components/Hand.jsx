@@ -1,4 +1,5 @@
 import React from "react";
+import Card from "./Card";
 
 export default function Hand({ hand, onPlayCard, isTurn }) {
   return (
@@ -6,18 +7,12 @@ export default function Hand({ hand, onPlayCard, isTurn }) {
       <h3>Your Hand:</h3>
       <div style={{ display: "flex", gap: "8px" }}>
         {hand.map((card) => (
-          <div
+          <Card
             key={card}
+            card={card}
             onClick={() => isTurn && onPlayCard(card)}
-            style={{
-              border: "1px solid black",
-              padding: "8px",
-              cursor: isTurn ? "pointer" : "not-allowed",
-              backgroundColor: isTurn ? "white" : "#f0f0f0",
-            }}
-          >
-            {card}
-          </div>
+            disabled={!isTurn}
+          />
         ))}
       </div>
     </div>
