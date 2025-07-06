@@ -31,6 +31,9 @@ export default function Home() {
       <br />
       <button onClick={handleCreate}>Create Room</button>
       <button onClick={handleJoin}>Join Room</button>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+        Learn More
+      </button>
     </div>
   );
 }
