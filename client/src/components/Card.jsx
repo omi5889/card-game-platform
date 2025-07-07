@@ -1,4 +1,3 @@
-// src/components/Card.jsx
 import React from "react";
 
 const suitSymbols = {
@@ -9,10 +8,18 @@ const suitSymbols = {
 };
 
 const suitColors = {
-  S: "black",
-  C: "black",
-  H: "red",
-  D: "red",
+  active: {
+    S: "#232220", // black-like
+    C: "#232220",
+    H: "#d50000", // vibrant red
+    D: "#d50000",
+  },
+  disabled: {
+    S: "#9f8d8d",
+    C: "#9f8d8d",
+    H: "#e6a3a3", // soft red
+    D: "#e6a3a3",
+  },
 };
 
 export default function Card({ card, onClick, disabled }) {
@@ -20,35 +27,44 @@ export default function Card({ card, onClick, disabled }) {
 
   const rank = card.slice(0, -1);
   const suit = card.slice(-1);
-  const color = suitColors[suit];
+  const color = disabled ? suitColors.disabled[suit] : suitColors.active[suit];
+
+  const baseStyle = {
+    cursor: disabled ? "default" : "pointer",
+    userSelect: "none",
+    border: `1.5px solid ${disabled ? "#9f8d8d" : "#4e4c4f"}`,
+    borderRadius: "8px",
+    width: "80px",
+    height: "120px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "6px",
+    backgroundColor: disabled ? "#4e4c4f" : "#ffddba",
+    boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
+    color,
+    fontWeight: "bold",
+    fontSize: "18px",
+    textAlign: "center",
+    transition: "transform 0.2s ease, background-color 0.2s ease",
+  };
 
   return (
     <div
       onClick={disabled ? undefined : () => onClick(card)}
-      style={{
-        cursor: disabled ? "default" : "pointer",
-        userSelect: "none",
-        border: "1.5px solid #333",
-        borderRadius: "8px",
-        width: "60px",
-        height: "90px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "6px",
-        backgroundColor: "white",
-        boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
-        color,
-        fontWeight: "bold",
-        fontSize: "18px",
-        textAlign: "center",
-        transition: "transform 0.2s ease",
-      }}
+      style={baseStyle}
       onMouseEnter={(e) => {
-        if (!disabled) e.currentTarget.style.transform = "translateY(-10px)";
+        if (!disabled) {
+          e.currentTarget.style.transform = "translateY(-10px)";
+          e.currentTarget.style.backgroundColor = "#d9ae8e";
+        }
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.backgroundColor = disabled
+          ? "#4e4c4f"
+          : "#ffddba";
       }}
     >
       <div>{rank}</div>

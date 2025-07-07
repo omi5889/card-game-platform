@@ -21,19 +21,32 @@ export default function Home() {
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>🃏 Multiplayer Card Game</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[#232220] text-[#ffddba]">
+      <h1 className="text-3xl font-bold mb-6">🃏 Multiplayer Card Game</h1>
+
       <input
+        type="text"
         placeholder="Enter your name"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        className="mb-4 p-2 w-64 rounded text-black bg-white"
       />
-      <br />
-      <button onClick={handleCreate}>Create Room</button>
-      <button onClick={handleJoin}>Join Room</button>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
-        Learn More
-      </button>
+
+      <div className="flex gap-4">
+        <button
+          onClick={handleCreate}
+          className="bg-[#d9ae8e] text-[#232220] px-4 py-2 rounded hover:bg-[#ffddba] transition"
+        >
+          Create Room
+        </button>
+
+        <button
+          onClick={handleJoin}
+          className="bg-[#9f8d8d] text-white px-4 py-2 rounded hover:bg-[#4e4c4f] transition"
+        >
+          Join Room
+        </button>
+      </div>
     </div>
   );
 }

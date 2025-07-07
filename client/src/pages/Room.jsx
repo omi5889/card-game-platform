@@ -219,28 +219,36 @@ export default function Room() {
   }
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2>Room ID: {roomId}</h2>
-      <h3>User: {state.username}</h3>
+    <div className="p-6 space-y-4 min-h-screen bg-[#232220] text-[#ffddba]">
+      <h2 className="text-xl font-bold">Room ID: {roomId}</h2>
+      <h3 className="text-lg">User: {state.username}</h3>
 
-      <PlayerList players={players} />
+      <PlayerList
+        players={players}
+        currentTurnId={currentTurnId}
+        trick={trick}
+      />
 
-      {/* Hide Start Game button during active round */}
       {players.length === 4 && !roundResult && (
-        <button onClick={() => socket.emit("start-game", { roomId })}>
+        <button
+          onClick={() => socket.emit("start-game", { roomId })}
+          className="bg-[#d9ae8e] hover:bg-[#ffddba] text-[#232220] font-semibold py-2 px-4 rounded transition"
+        >
           Start Game
         </button>
       )}
 
       {trumpChooserId && (
-        <p>
+        <p className="text-md italic">
           Trump will be selected by:{" "}
-          {trumpChooserId === myId ? "You" : trumpChooserId.slice(0, 5)}
+          <span className="font-semibold">
+            {trumpChooserId === myId ? "You" : trumpChooserId.slice(0, 5)}
+          </span>
         </p>
       )}
 
       {trumpSuit && trumpChooserName && (
-        <p>
+        <p className="text-md">
           <strong>Trump Suit:</strong> {trumpSuit} (chosen by {trumpChooserName}
           )
         </p>
@@ -260,14 +268,13 @@ export default function Room() {
         />
       )}
 
-      <TrickDisplay trick={trick} />
-
-      <TeamScores teamScores={teamScores} />
+      {/* <TrickDisplay trick={trick} /> */}
 
       <LastTrickWinner lastTrickWinner={lastTrickWinner} />
 
-      {/* Round result summary */}
       <RoundResult roomId={roomId} roundResult={roundResult} />
+
+      <TeamScores teamScores={teamScores} />
     </div>
   );
 }

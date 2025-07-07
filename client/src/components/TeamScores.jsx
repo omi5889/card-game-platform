@@ -2,16 +2,55 @@ import React from "react";
 
 export default function TeamScores({ teamScores }) {
   return (
-    <div className="mt-4 text-center">
-      <h3 className="font-bold">Team Scores</h3>
-      <div className="flex justify-center gap-6 text-sm mt-2">
-        <div className="p-2 border rounded bg-blue-50">
-          <div className="font-semibold">Team 0 (Players 0 & 2)</div>
+    <div
+      style={{
+        marginTop: "1.5rem",
+        textAlign: "center",
+        color: "#ffddba", // pale
+      }}
+    >
+      <h3 style={{ fontWeight: "bold", fontSize: "1.2rem" }}>Team Scores</h3>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "2rem",
+          marginTop: "0.75rem",
+          fontSize: "1.2rem",
+        }}
+      >
+        {/* Team 0 */}
+        <div
+          style={{
+            padding: "1rem",
+            borderRadius: "10px",
+            backgroundColor: "#4e4c4f", // mid
+            border: "2px solid #d9ae8e", // accent
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            minWidth: "160px",
+          }}
+        >
+          <div style={{ fontWeight: "600", marginBottom: "0.5rem" }}>
+            Team 0 (Players 0 & 2)
+          </div>
           <div>Tricks: {teamScores.teamTricks[0]}</div>
           <div>Tens: {teamScores.teamTens[0]}</div>
         </div>
-        <div className="p-2 border rounded bg-red-50">
-          <div className="font-semibold">Team 1 (Players 1 & 3)</div>
+
+        {/* Team 1 */}
+        <div
+          style={{
+            padding: "1rem",
+            borderRadius: "10px",
+            backgroundColor: "#4e4c4f", // mid
+            border: "2px solid #d9ae8e", // accent
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            minWidth: "160px",
+          }}
+        >
+          <div style={{ fontWeight: "600", marginBottom: "0.5rem" }}>
+            Team 1 (Players 1 & 3)
+          </div>
           <div>Tricks: {teamScores.teamTricks[1]}</div>
           <div>Tens: {teamScores.teamTens[1]}</div>
         </div>

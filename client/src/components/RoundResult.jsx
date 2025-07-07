@@ -8,12 +8,52 @@ export default function RoundResult({ roomId, roundResult }) {
     socket.emit("restart-round", { roomId });
   };
 
+  const containerStyle = {
+    marginTop: "1rem",
+    padding: "1.5rem",
+    backgroundColor: "#9f8d8d", // soft
+    borderRadius: "10px",
+    textAlign: "center",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.25)",
+    color: "#232220", // dark text
+  };
+
+  const resultStyle = {
+    fontSize: "1.25rem",
+    fontWeight: "bold",
+    marginBottom: "0.75rem",
+  };
+
+  const infoStyle = {
+    fontSize: "0.95rem",
+    lineHeight: "1.5",
+  };
+
+  const matchCompleteStyle = {
+    marginTop: "1rem",
+    fontSize: "1.1rem",
+    fontWeight: "600",
+    color: "#b91c1c", // red
+  };
+
+  const buttonStyle = {
+    marginTop: "1.25rem",
+    padding: "0.6rem 1.2rem",
+    backgroundColor: "#4e4c4f", // mid
+    color: "#ffddba", // pale
+    borderRadius: "8px",
+    fontWeight: "600",
+    border: "none",
+    cursor: "pointer",
+    transition: "background-color 0.2s ease",
+  };
+
   return (
-    <div className="mt-4 p-4 bg-green-100 rounded shadow text-center">
+    <div style={containerStyle}>
       {roundResult?.result && typeof roundResult.result === "string" && (
-        <h2 className="text-xl font-bold">{roundResult.result}</h2>
+        <h2 style={resultStyle}>{roundResult.result}</h2>
       )}
-      <p className="mt-2 text-sm">
+      <p style={infoStyle}>
         Team 0 - Rounds Won: {roundResult.roundsWon[0]}
         <br />
         Team 1 - Rounds Won: {roundResult.roundsWon[1]}
@@ -22,14 +62,11 @@ export default function RoundResult({ roomId, roundResult }) {
       </p>
 
       {roundResult.matchComplete ? (
-        <div className="mt-2 text-lg text-red-600 font-semibold">
+        <div style={matchCompleteStyle}>
           🎉 Team {roundResult.matchWinner} wins the match!
         </div>
       ) : (
-        <button
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          onClick={handleNextRound}
-        >
+        <button style={buttonStyle} onClick={handleNextRound}>
           🔁 Play Next Round
         </button>
       )}
