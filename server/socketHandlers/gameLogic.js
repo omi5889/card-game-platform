@@ -107,14 +107,17 @@ function playCard(socket, io, roomId, card) {
       let winningTeam = null;
 
       if (team0 > team1) {
-        result = "Team 0 wins!";
-        room.roundsWon[0]++;
         winningTeam = 0;
       } else if (team1 > team0) {
-        result = "Team 1 wins!";
-        room.roundsWon[1]++;
         winningTeam = 1;
-      } else result = "Draw!";
+      } else {
+        // Tens are equal, use tricks to decide winner
+        const tricks0 = room.teamTricks[0];
+        const tricks1 = room.teamTricks[1];
+        winningTeam = tricks0 >= tricks1 ? 0 : 1;
+      }
+
+      room.roundsWon[winningTeam]++;
 
       const matchComplete = room.roundsWon.some(
         (wins) => wins > Math.floor(room.roundTarget / 2)
@@ -124,16 +127,19 @@ function playCard(socket, io, roomId, card) {
         //   teamTens: room.teamTens,
         //   teamTricks: room.teamTricks,
         //   result,
-        result:
-          winningTeam !== null
-            ? `Team ${winningTeam} wins the round!`
-            : "Round is a draw!",
+        result: `Team ${winningTeam} wins the round!`,
         teamTens: room.teamTens,
         teamTricks: room.teamTricks,
         roundsWon: room.roundsWon,
         roundTarget: room.roundTarget,
-        matchComplete,
-        matchWinner: matchComplete ? winningTeam : null,
+        matchComplete: room.roundsWon.some(
+          (wins) => wins > Math.floor(room.roundTarget / 2)
+        ),
+        matchWinner: room.roundsWon.some(
+          (wins) => wins > Math.floor(room.roundTarget / 2)
+        )
+          ? winningTeam
+          : null,
       });
 
       room.trumpChooserIndex = (room.trumpChooserIndex + 1) % 4;
