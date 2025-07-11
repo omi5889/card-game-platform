@@ -32,6 +32,7 @@ export default function Room() {
   const [trumpChooserId, setTrumpChooserId] = useState(null);
   const [myId, setMyId] = useState(null);
   const [selectedCard, setSelectedCard] = useState(null); // you used this in round-restarting
+  const [isGameStarted, setIsGameStarted] = useState(false);
 
   // Join room
   useEffect(() => {
@@ -58,6 +59,7 @@ export default function Room() {
 
     socket.on("game-started", () => {
       alert("Game has started!");
+      setIsGameStarted(true);
     });
 
     socket.on("test-event", () => {
@@ -194,6 +196,7 @@ export default function Room() {
       setTeamScores({ teamTens: [0, 0], teamTricks: [0, 0] });
       setTrumpSuit(null);
       setTrumpChooserName(null);
+      setIsGameStarted(false);
     });
 
     return () => {
@@ -206,6 +209,7 @@ export default function Room() {
   useEffect(() => {
     socket.on("start-game", ({ roomId }) => {
       console.log("🎯 Received start-game for", roomId);
+      setIsGameStarted(true);
       // You can add any UI reset here if needed
     });
 
@@ -237,7 +241,7 @@ export default function Room() {
           trick={trick}
         />
 
-        {players.length === 4 && !roundResult && (
+        {players.length === 4 && !isGameStarted && !roundResult && (
           <button
             onClick={() => socket.emit("start-game", { roomId })}
             className="bg-[#d9ae8e] hover:bg-[#ffddba] text-[#232220] font-semibold py-2 px-4 rounded transition"

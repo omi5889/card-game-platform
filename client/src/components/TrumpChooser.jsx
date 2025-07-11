@@ -24,8 +24,6 @@ export default function TrumpChooser({ roomId, socket, onSuitSelected }) {
         textAlign: "center",
         margin: "1rem 0",
         boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-        maxWidth: "30%",
-        margin: "auto",
       }}
     >
       <h3 style={{ marginBottom: "1rem", fontSize: "1.25rem" }}>
