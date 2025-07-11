@@ -24,6 +24,8 @@ export default function TrumpChooser({ roomId, socket, onSuitSelected }) {
         textAlign: "center",
         margin: "1rem 0",
         boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+        maxWidth: "30%",
+        margin: "auto",
       }}
     >
       <h3 style={{ marginBottom: "1rem", fontSize: "1.25rem" }}>
@@ -41,7 +43,7 @@ export default function TrumpChooser({ roomId, socket, onSuitSelected }) {
             key={value}
             onClick={() => handleSelect(value)}
             style={{
-              backgroundColor: "#d9ae8e",
+              backgroundColor: "#f2f0ed",
               color,
               fontWeight: "bold",
               border: "none",
@@ -52,11 +54,11 @@ export default function TrumpChooser({ roomId, socket, onSuitSelected }) {
               transition: "transform 0.2s, background 0.3s",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#ffddba";
+              e.currentTarget.style.backgroundColor = "#f2f0ed";
               e.currentTarget.style.transform = "scale(1.1)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#d9ae8e";
+              e.currentTarget.style.backgroundColor = "#f2f0ed";
               e.currentTarget.style.transform = "scale(1)";
             }}
           >

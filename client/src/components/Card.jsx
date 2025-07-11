@@ -41,7 +41,7 @@ export default function Card({ card, onClick, disabled }) {
     justifyContent: "space-between",
     alignItems: "center",
     padding: "6px",
-    backgroundColor: disabled ? "#4e4c4f" : "#ffddba",
+    backgroundColor: disabled ? "#4e4c4f" : "#f2f0ed",
     boxShadow: "2px 2px 6px rgba(0,0,0,0.2)",
     color,
     fontWeight: "bold",
@@ -57,14 +57,14 @@ export default function Card({ card, onClick, disabled }) {
       onMouseEnter={(e) => {
         if (!disabled) {
           e.currentTarget.style.transform = "translateY(-10px)";
-          e.currentTarget.style.backgroundColor = "#d9ae8e";
+          e.currentTarget.style.backgroundColor = "#f2f0ed";
         }
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "translateY(0)";
         e.currentTarget.style.backgroundColor = disabled
           ? "#4e4c4f"
-          : "#ffddba";
+          : "#f2f0ed";
       }}
     >
       <div>{rank}</div>

@@ -31,7 +31,7 @@ export default function TrickDisplay({ trick }) {
               key={i}
               style={{
                 textAlign: "center",
-                backgroundColor: "#ffddba",
+                backgroundColor: "#f2f0ed",
                 borderRadius: "8px",
                 padding: "0.75rem",
                 minWidth: "80px",
