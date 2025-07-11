@@ -220,61 +220,70 @@ export default function Room() {
 
   return (
     <div className="p-6 space-y-4 min-h-screen bg-[#232220] text-[#ffddba]">
-      <h2 className="text-xl font-bold">Room ID: {roomId}</h2>
-      <h3 className="text-lg">User: {state.username}</h3>
+      <div
+        style={{
+          padding: "2rem",
+          marginLeft: "auto",
+          marginRight: "auto",
+          maxWidth: "960px",
+        }}
+      >
+        <h2 className="text-xl font-bold">Room ID: {roomId}</h2>
+        <h3 className="text-lg">User: {state.username}</h3>
 
-      <PlayerList
-        players={players}
-        currentTurnId={currentTurnId}
-        trick={trick}
-      />
-
-      {players.length === 4 && !roundResult && (
-        <button
-          onClick={() => socket.emit("start-game", { roomId })}
-          className="bg-[#d9ae8e] hover:bg-[#ffddba] text-[#232220] font-semibold py-2 px-4 rounded transition"
-        >
-          Start Game
-        </button>
-      )}
-
-      {trumpChooserId && (
-        <p className="text-md italic">
-          Trump will be selected by:{" "}
-          <span className="font-semibold">
-            {trumpChooserId === myId ? "You" : trumpChooserId.slice(0, 5)}
-          </span>
-        </p>
-      )}
-
-      {trumpSuit && trumpChooserName && (
-        <p className="text-md">
-          <strong>Trump Suit:</strong> {trumpSuit} (chosen by {trumpChooserName}
-          )
-        </p>
-      )}
-
-      <Hand
-        hand={hand}
-        onPlayCard={playCard}
-        isTurn={socket.id === currentTurnId}
-      />
-
-      {isTrumpChooser && (
-        <TrumpChooser
-          roomId={roomId}
-          socket={socket}
-          onSuitSelected={() => setIsTrumpChooser(false)}
+        <PlayerList
+          players={players}
+          currentTurnId={currentTurnId}
+          trick={trick}
         />
-      )}
 
-      {/* <TrickDisplay trick={trick} /> */}
+        {players.length === 4 && !roundResult && (
+          <button
+            onClick={() => socket.emit("start-game", { roomId })}
+            className="bg-[#d9ae8e] hover:bg-[#ffddba] text-[#232220] font-semibold py-2 px-4 rounded transition"
+          >
+            Start Game
+          </button>
+        )}
 
-      <LastTrickWinner lastTrickWinner={lastTrickWinner} />
+        {trumpChooserId && (
+          <p className="text-md italic">
+            Trump will be selected by:{" "}
+            <span className="font-semibold">
+              {trumpChooserId === myId ? "You" : trumpChooserId.slice(0, 5)}
+            </span>
+          </p>
+        )}
 
-      <RoundResult roomId={roomId} roundResult={roundResult} />
+        {trumpSuit && trumpChooserName && (
+          <p className="text-md">
+            <strong>Trump Suit:</strong> {trumpSuit} (chosen by{" "}
+            {trumpChooserName})
+          </p>
+        )}
 
-      <TeamScores teamScores={teamScores} />
+        <Hand
+          hand={hand}
+          onPlayCard={playCard}
+          isTurn={socket.id === currentTurnId}
+        />
+
+        {isTrumpChooser && (
+          <TrumpChooser
+            roomId={roomId}
+            socket={socket}
+            onSuitSelected={() => setIsTrumpChooser(false)}
+          />
+        )}
+
+        {/* <TrickDisplay trick={trick} /> */}
+
+        <LastTrickWinner lastTrickWinner={lastTrickWinner} />
+
+        <RoundResult roomId={roomId} roundResult={roundResult} />
+
+        <TeamScores teamScores={teamScores} />
+      </div>
     </div>
   );
 }
