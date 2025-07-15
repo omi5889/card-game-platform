@@ -1,21 +1,23 @@
-// // src/pages/Room.jsx
+// src/pages/Room.jsx
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { socket } from "../socket";
+import { useJoinRoom } from "../hooks/useJoinRoom";
 
 import PlayerList from "../components/PlayerList";
 import Hand from "../components/Hand";
 import TrumpChooser from "../components/TrumpChooser";
-import TrickDisplay from "../components/TrickDisplay";
-import TeamScores from "../components/TeamScores";
 import LastTrickWinner from "../components/LastTrickWinner";
 import RoundResult from "../components/RoundResult";
+import TeamScores from "../components/TeamScores";
+import ShareLink from "../components/ShareLink";
 
 export default function Room() {
-  const { roomId } = useParams();
   const { state } = useLocation();
+  const { roomId } = useParams();
+  const initialUsername = state?.username || null;
+  const { players, username } = useJoinRoom(roomId, initialUsername);
 
-  const [players, setPlayers] = useState([]);
   const [hand, setHand] = useState([]);
   const [currentTurnId, setCurrentTurnId] = useState(null);
   const [isTrumpChooser, setIsTrumpChooser] = useState(false);
@@ -31,41 +33,16 @@ export default function Room() {
   const [roundResult, setRoundResult] = useState(null);
   const [trumpChooserId, setTrumpChooserId] = useState(null);
   const [myId, setMyId] = useState(null);
-  const [selectedCard, setSelectedCard] = useState(null); // you used this in round-restarting
+  const [selectedCard, setSelectedCard] = useState(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
 
-  // Join room
-  useEffect(() => {
-    if (!state?.username) return;
-
-    socket.emit("join-room", { roomId, username: state.username }, (res) => {
-      if (res.error) {
-        alert(res.error);
-        return;
-      }
-      setPlayers(res.players);
-    });
-
-    socket.on("room-update", setPlayers);
-
-    return () => {
-      socket.off("room-update");
-    };
-  }, [roomId, state?.username]);
-
-  // Deal cards, game started, test event
   useEffect(() => {
     socket.on("deal-cards", setHand);
-
     socket.on("game-started", () => {
       alert("Game has started!");
       setIsGameStarted(true);
     });
-
-    socket.on("test-event", () => {
-      alert("Test event received------");
-      setTestFlag((prev) => !prev);
-    });
+    socket.on("test-event", () => setTestFlag((prev) => !prev));
 
     return () => {
       socket.off("deal-cards");
@@ -74,166 +51,107 @@ export default function Room() {
     };
   }, []);
 
-  // Turn update
   useEffect(() => {
     socket.on("turn-update", setCurrentTurnId);
-
-    return () => {
-      socket.off("turn-update");
-    };
+    return () => socket.off("turn-update");
   }, []);
 
-  // Card played and trick completion
   useEffect(() => {
     socket.on("card-played", ({ playerName, playerId, card }) => {
       setTrick((prev) => [...prev, { playerName, playerId, card }]);
     });
-
-    socket.on("trick-complete", (trickData) => {
-      setTrick(trickData);
-    });
-
+    socket.on("trick-complete", setTrick);
     return () => {
       socket.off("card-played");
       socket.off("trick-complete");
     };
   }, []);
 
-  // Trick winner resets trick display
   useEffect(() => {
-    socket.on("trick-winner", () => {
-      setTrick([]);
-    });
-
-    return () => {
-      socket.off("trick-winner");
-    };
+    socket.on("trick-winner", () => setTrick([]));
+    return () => socket.off("trick-winner");
   }, []);
 
-  // Trump selection
   useEffect(() => {
     socket.on("trump-select-start", (fiveCards) => {
       setHand(fiveCards);
       setIsTrumpChooser(true);
     });
-
     socket.on("trump-set", ({ suit, chooserName }) => {
       setTrumpSuit(suit);
       setTrumpChooserName(chooserName);
     });
-
     return () => {
       socket.off("trump-select-start");
       socket.off("trump-set");
     };
   }, []);
 
-  // Connect and waiting for trump chooser
   useEffect(() => {
-    socket.on("connect", () => {
-      setMyId(socket.id);
-    });
-
-    socket.on("waiting-for-trump", (chooserId) => {
-      setTrumpChooserId(chooserId);
-    });
-
+    socket.on("connect", () => setMyId(socket.id));
+    socket.on("waiting-for-trump", setTrumpChooserId);
     return () => {
-      socket.off("waiting-for-trump");
       socket.off("connect");
+      socket.off("waiting-for-trump");
     };
   }, []);
 
-  // Update hand
   useEffect(() => {
     socket.on("update-hand", setHand);
-
-    return () => {
-      socket.off("update-hand");
-    };
+    return () => socket.off("update-hand");
   }, []);
 
-  // Score updates
   useEffect(() => {
     socket.on("score-update", ({ teamTens, teamTricks }) => {
       setTeamScores({ teamTens, teamTricks });
     });
-
     return () => socket.off("score-update");
   }, []);
 
-  // Last trick winner display
   useEffect(() => {
     socket.on("trick-winner", ({ winnerUsername, card, tensCaptured }) => {
-      setLastTrickWinner({
-        winner: winnerUsername,
-        card,
-        tensCaptured,
-      });
+      setLastTrickWinner({ winner: winnerUsername, card, tensCaptured });
     });
-
     return () => socket.off("trick-winner");
   }, []);
 
-  // Round end and round restarting
   useEffect(() => {
-    socket.on("round-end", (data) => {
-      console.log("🖥️ round-end received:", data);
-      setRoundResult(data);
-    });
-
+    socket.on("round-end", setRoundResult);
     socket.on("round-restarting", () => {
-      console.log("🔄 Round is restarting, resetting UI state");
       setTrick([]);
       setHand([]);
       setLastTrickWinner(null);
       setSelectedCard(null);
-      // setRoundResult(null);
-      setRoundResult((prev) => ({
-        ...prev,
-        result: null,
-      }));
+      setRoundResult((prev) => ({ ...prev, result: null }));
       setTeamScores({ teamTens: [0, 0], teamTricks: [0, 0] });
       setTrumpSuit(null);
       setTrumpChooserName(null);
       setIsGameStarted(false);
     });
-
     return () => {
       socket.off("round-end");
       socket.off("round-restarting");
     };
   }, []);
 
-  // Start game log
   useEffect(() => {
-    socket.on("start-game", ({ roomId }) => {
-      console.log("🎯 Received start-game for", roomId);
+    socket.on("start-game", () => {
       setIsGameStarted(true);
-      // You can add any UI reset here if needed
     });
-
     return () => socket.off("start-game");
   }, []);
 
-  // Play card helper
-  function playCard(card) {
+  const playCard = (card) => {
     if (socket.id !== currentTurnId) return;
     socket.emit("play-card", { roomId, card });
-  }
+  };
 
   return (
     <div className="p-6 space-y-4 min-h-screen bg-[#232220] text-[#ffddba]">
-      <div
-        style={{
-          padding: "2rem",
-          marginLeft: "auto",
-          marginRight: "auto",
-          maxWidth: "960px",
-        }}
-      >
+      <div style={{ padding: "2rem", margin: "0 auto", maxWidth: "960px" }}>
         <h2 className="text-xl font-bold">Room ID: {roomId}</h2>
-        <h3 className="text-lg">User: {state.username}</h3>
+        <ShareLink roomId={roomId} hostId={players[0]?.id} />
+        <h3 className="text-lg">User: {username}</h3>
 
         <PlayerList
           players={players}
@@ -280,12 +198,8 @@ export default function Room() {
           />
         )}
 
-        {/* <TrickDisplay trick={trick} /> */}
-
         <LastTrickWinner lastTrickWinner={lastTrickWinner} />
-
         <RoundResult roomId={roomId} roundResult={roundResult} />
-
         <TeamScores teamScores={teamScores} />
       </div>
     </div>
