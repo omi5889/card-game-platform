@@ -127,7 +127,7 @@ function playCard(socket, io, roomId, card) {
         //   teamTens: room.teamTens,
         //   teamTricks: room.teamTricks,
         //   result,
-        result: `Team ${winningTeam} wins the round!`,
+        result: `Team ${winningTeam + 1} wins the round!`,
         teamTens: room.teamTens,
         teamTricks: room.teamTricks,
         roundsWon: room.roundsWon,

@@ -54,16 +54,16 @@ export default function RoundResult({ roomId, roundResult }) {
         <h2 style={resultStyle}>{roundResult.result}</h2>
       )}
       <p style={infoStyle}>
-        Team 0 - Rounds Won: {roundResult.roundsWon[0]}
+        Team 1 - Rounds Won: {roundResult.roundsWon[0]}
         <br />
-        Team 1 - Rounds Won: {roundResult.roundsWon[1]}
+        Team 2 - Rounds Won: {roundResult.roundsWon[1]}
         <br />
         Target: Best of {roundResult.roundTarget}
       </p>
 
       {roundResult.matchComplete ? (
         <div style={matchCompleteStyle}>
-          🎉 Team {roundResult.matchWinner} wins the match!
+          🎉 Team {roundResult.matchWinner + 1} wins the match!
         </div>
       ) : (
         <button style={buttonStyle} onClick={handleNextRound}>

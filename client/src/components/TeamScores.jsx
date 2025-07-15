@@ -31,7 +31,7 @@ export default function TeamScores({ teamScores }) {
           }}
         >
           <div style={{ fontWeight: "600", marginBottom: "0.5rem" }}>
-            Team 0 (Players 0 & 2)
+            Team 1 (Players 1 & 3)
           </div>
           <div>Tricks: {teamScores.teamTricks[0]}</div>
           <div>Tens: {teamScores.teamTens[0]}</div>
@@ -49,7 +49,7 @@ export default function TeamScores({ teamScores }) {
           }}
         >
           <div style={{ fontWeight: "600", marginBottom: "0.5rem" }}>
-            Team 1 (Players 1 & 3)
+            Team 2 (Players 2 & 4)
           </div>
           <div>Tricks: {teamScores.teamTricks[1]}</div>
           <div>Tens: {teamScores.teamTens[1]}</div>
