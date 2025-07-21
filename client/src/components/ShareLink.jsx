@@ -1,14 +1,19 @@
 // src/components/ShareLink.jsx
-import React from "react";
+import React, { useState } from "react";
 import { socket } from "../socket";
 
 export default function ShareLink({ roomId, hostId }) {
+  const [copied, setCopied] = useState(false);
+
   if (socket.id !== hostId) return null;
 
   const joinUrl = `${window.location.origin}/room/${roomId}`;
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(joinUrl);
+    navigator.clipboard.writeText(joinUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 5000); // Reset message after 2s
+    });
   };
 
   return (
@@ -25,7 +30,7 @@ export default function ShareLink({ roomId, hostId }) {
           onClick={copyToClipboard}
           className="px-3 py-1 bg-[#d9ae8e] text-[#232220] font-medium rounded hover:bg-opacity-90"
         >
-          Copy
+          {copied ? "Copied!" : "Copy"}
         </button>
       </div>
     </div>
