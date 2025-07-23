@@ -5,7 +5,11 @@ const { Server } = require("socket.io");
 const { log } = require("console");
 
 // const { getSuit, getRank } = require("./utils/cardUtils");
-const { startGame, restartRound } = require("./socketHandlers/roundHandlers");
+const {
+  startGame,
+  restartRound,
+  restartGame,
+} = require("./socketHandlers/roundHandlers");
 const { playCard, trumpSelected } = require("./socketHandlers/gameLogic");
 const {
   createRoom,
@@ -51,6 +55,10 @@ io.on("connection", (socket) => {
 
   socket.on("restart-round", ({ roomId }) => {
     restartRound(io, roomId);
+  });
+
+  socket.on("restart-game", ({ roomId }) => {
+    restartGame(io, roomId);
   });
 
   socket.on("play-card", ({ roomId, card }) => {

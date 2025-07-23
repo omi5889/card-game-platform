@@ -141,6 +141,22 @@ export default function Room() {
     return () => socket.off("start-game");
   }, []);
 
+  useEffect(() => {
+    socket.on("game-restarted", () => {
+      setTrick([]);
+      setHand([]);
+      setLastTrickWinner(null);
+      setSelectedCard(null);
+      setRoundResult(null);
+      setTeamScores({ teamTens: [0, 0], teamTricks: [0, 0] });
+      setTrumpSuit(null);
+      setTrumpChooserName(null);
+      setIsGameStarted(false);
+    });
+
+    return () => socket.off("game-restarted");
+  }, []);
+
   const playCard = (card) => {
     if (socket.id !== currentTurnId) return;
     socket.emit("play-card", { roomId, card });

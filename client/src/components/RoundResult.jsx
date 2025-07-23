@@ -8,6 +8,10 @@ export default function RoundResult({ roomId, roundResult }) {
     socket.emit("restart-round", { roomId });
   };
 
+  const handleRestartGame = () => {
+    socket.emit("restart-game", { roomId });
+  };
+
   const containerStyle = {
     marginTop: "1rem",
     padding: "1.5rem",
@@ -62,9 +66,14 @@ export default function RoundResult({ roomId, roundResult }) {
       </p>
 
       {roundResult.matchComplete ? (
-        <div style={matchCompleteStyle}>
-          🎉 Team {roundResult.matchWinner + 1} wins the match!
-        </div>
+        <>
+          <div style={matchCompleteStyle}>
+            🎉 Team {roundResult.matchWinner + 1} wins the match!
+          </div>
+          <button style={buttonStyle} onClick={handleRestartGame}>
+            🔄 Restart Game
+          </button>
+        </>
       ) : (
         <button style={buttonStyle} onClick={handleNextRound}>
           🔁 Play Next Round

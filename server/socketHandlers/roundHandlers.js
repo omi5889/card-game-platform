@@ -73,4 +73,27 @@ function restartRound(io, roomId) {
   startGame(io, roomId);
 }
 
-module.exports = { startGame, restartRound };
+function restartGame(io, roomId) {
+  const room = rooms[roomId];
+  if (!room) return;
+
+  // Reset full game state
+  room.roundsWon = [0, 0];
+  room.roundTarget = 5;
+  room.trumpChooserIndex = 0;
+
+  // Clear per-round state too
+  room.trickCount = 0;
+  room.teamTens = [0, 0];
+  room.teamTricks = [0, 0];
+  room.trick = [];
+  room.trumpSuit = null;
+  room.deck = null;
+
+  io.to(roomId).emit("game-restarted");
+
+  // Immediately start new game
+  startGame(io, roomId);
+}
+
+module.exports = { startGame, restartRound, restartGame };
