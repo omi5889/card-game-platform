@@ -48,13 +48,13 @@ io.on("connection", (socket) => {
     leaveRoom(socket, io);
   });
 
-  socket.on("start-game", ({ roomId }) => {
+  socket.on("start-game", ({ roomId, teamMap }) => {
     console.log("🚀 Start button clicked in room", roomId);
-    startGame(io, roomId); // Use shared logic
+    startGame(io, roomId, teamMap); // Use shared logic
   });
 
-  socket.on("restart-round", ({ roomId }) => {
-    restartRound(io, roomId);
+  socket.on("restart-round", ({ roomId, teamMap }) => {
+    restartRound(io, roomId, teamMap);
   });
 
   socket.on("restart-game", ({ roomId }) => {

@@ -11,6 +11,7 @@ import LastTrickWinner from "../components/LastTrickWinner";
 import RoundResult from "../components/RoundResult";
 import TeamScores from "../components/TeamScores";
 import ShareLink from "../components/ShareLink";
+import TeamAssignment from "../components/TeamAssignment";
 
 export default function Room() {
   const { state } = useLocation();
@@ -35,6 +36,8 @@ export default function Room() {
   const [myId, setMyId] = useState(null);
   const [selectedCard, setSelectedCard] = useState(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [teamMap, setTeamMap] = useState({});
+  const hostId = players[0]?.id;
 
   useEffect(() => {
     socket.on("deal-cards", setHand);
@@ -90,9 +93,13 @@ export default function Room() {
   useEffect(() => {
     socket.on("connect", () => setMyId(socket.id));
     socket.on("waiting-for-trump", setTrumpChooserId);
+    socket.on("team-map-update", (teamMap) => {
+      setTeamMap(teamMap); // Updates state for PlayerList, etc.
+    });
     return () => {
       socket.off("connect");
       socket.off("waiting-for-trump");
+      socket.off("team-map-update");
     };
   }, []);
 
@@ -173,15 +180,39 @@ export default function Room() {
           players={players}
           currentTurnId={currentTurnId}
           trick={trick}
+          teamMap={teamMap}
         />
 
-        {players.length === 4 && !isGameStarted && !roundResult && (
+        {/* {players.length === 4 && !isGameStarted && !roundResult && (
           <button
             onClick={() => socket.emit("start-game", { roomId })}
             className="bg-[#d9ae8e] hover:bg-[#ffddba] text-[#232220] font-semibold py-2 px-4 rounded transition"
           >
             Start Game
           </button>
+        )} */}
+        {players.length === 4 && !isGameStarted && !roundResult && (
+          <>
+            <TeamAssignment
+              players={players}
+              teamMap={teamMap}
+              setTeamMap={setTeamMap}
+              hostId={hostId}
+              myId={socket.id}
+            />
+
+            <button
+              disabled={
+                Object.keys(teamMap).length !== 4 ||
+                Object.values(teamMap).filter((v) => v === 0).length !== 2 ||
+                Object.values(teamMap).filter((v) => v === 1).length !== 2
+              }
+              onClick={() => socket.emit("start-game", { roomId, teamMap })}
+              className="bg-[#d9ae8e] hover:bg-[#ffddba] text-[#232220] font-semibold py-2 px-4 rounded transition disabled:opacity-50"
+            >
+              Start Game
+            </button>
+          </>
         )}
 
         {trumpChooserId && (
@@ -215,7 +246,11 @@ export default function Room() {
         )}
 
         <LastTrickWinner lastTrickWinner={lastTrickWinner} />
-        <RoundResult roomId={roomId} roundResult={roundResult} />
+        <RoundResult
+          roomId={roomId}
+          roundResult={roundResult}
+          teamMap={teamMap}
+        />
         <TeamScores teamScores={teamScores} />
       </div>
     </div>

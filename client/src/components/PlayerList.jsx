@@ -1,13 +1,14 @@
 import React from "react";
 import TrickDisplay from "./TrickDisplay";
 
-export default function PlayerList({ players, currentTurnId, trick }) {
+export default function PlayerList({ players, currentTurnId, trick, teamMap }) {
   if (players.length !== 4) {
     return <p>Waiting for 4 players to start the game...</p>;
   }
 
-  const teamA = [players[0], players[2]];
-  const teamB = [players[1], players[3]];
+  // Group players by team using teamMap
+  const teamA = players.filter((p) => teamMap[p.id] === 0);
+  const teamB = players.filter((p) => teamMap[p.id] === 1);
 
   const playerStyle = (isCurrent) => ({
     padding: "0.5rem 1rem",
@@ -39,15 +40,15 @@ export default function PlayerList({ players, currentTurnId, trick }) {
     >
       {/* Top - Team A player 1 */}
       <div style={{ gridColumn: 2, gridRow: 1 }}>
-        <div style={playerStyle(teamA[0].id === currentTurnId)}>
-          {teamA[0].username}
+        <div style={playerStyle(teamA[0]?.id === currentTurnId)}>
+          {teamA[0]?.username}
         </div>
       </div>
 
-      {/* Left - Team B player 1 */}
+      {/* Left - Team B player 2 */}
       <div style={{ gridColumn: 1, gridRow: 2 }}>
-        <div style={playerStyle(teamB[1].id === currentTurnId)}>
-          {teamB[1].username}
+        <div style={playerStyle(teamB[1]?.id === currentTurnId)}>
+          {teamB[1]?.username}
         </div>
       </div>
 
@@ -56,17 +57,17 @@ export default function PlayerList({ players, currentTurnId, trick }) {
         <TrickDisplay trick={trick} />
       </div>
 
-      {/* Right - Team B player 2 */}
+      {/* Right - Team B player 1 */}
       <div style={{ gridColumn: 3, gridRow: 2 }}>
-        <div style={playerStyle(teamB[0].id === currentTurnId)}>
-          {teamB[0].username}
+        <div style={playerStyle(teamB[0]?.id === currentTurnId)}>
+          {teamB[0]?.username}
         </div>
       </div>
 
       {/* Bottom - Team A player 2 */}
       <div style={{ gridColumn: 2, gridRow: 3 }}>
-        <div style={playerStyle(teamA[1].id === currentTurnId)}>
-          {teamA[1].username}
+        <div style={playerStyle(teamA[1]?.id === currentTurnId)}>
+          {teamA[1]?.username}
         </div>
       </div>
     </div>

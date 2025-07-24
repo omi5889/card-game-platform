@@ -1,10 +1,40 @@
 const { createDeck, shuffle } = require("../utils/deckUtils");
 const { rooms } = require("../state/roomStore");
 
-function startGame(io, roomId) {
+function startGame(io, roomId, teamMap) {
   console.log("🚀 Starting game in room ", roomId);
   const room = rooms[roomId];
+  teamMap = teamMap || room.teamMap;
   if (!room) return;
+  // Use existing teamMap if not provided
+  teamMap = teamMap || room.teamMap;
+
+  // Only reorder players if a new teamMap is provided (or on first game)
+  const isNewTeamMap = JSON.stringify(teamMap) !== JSON.stringify(room.teamMap);
+  if (isNewTeamMap) {
+    const teamA = [];
+    const teamB = [];
+
+    for (const player of room.players) {
+      const team = teamMap[player.id];
+      if (team === 0) teamA.push(player);
+      else if (team === 1) teamB.push(player);
+    }
+
+    const reorderedPlayers = [];
+    for (let i = 0; i < 2; i++) {
+      if (teamA[i]) reorderedPlayers.push(teamA[i]);
+      if (teamB[i]) reorderedPlayers.push(teamB[i]);
+    }
+
+    reorderedPlayers.forEach((p, index) => {
+      p.position = index;
+    });
+
+    room.players = reorderedPlayers;
+    room.teamMap = teamMap;
+    io.to(roomId).emit("team-map-update", teamMap);
+  }
 
   if (room.players.length !== 4) {
     return;
@@ -51,7 +81,7 @@ function startGame(io, roomId) {
   );
 }
 
-function restartRound(io, roomId) {
+function restartRound(io, roomId, teamMap) {
   const room = rooms[roomId];
   if (!room) return;
 
@@ -70,7 +100,8 @@ function restartRound(io, roomId) {
   io.to(roomId).emit("round-restarting");
 
   // ✅ Start game immediately
-  startGame(io, roomId);
+  console.log("🔄 Restarting round in room", roomId, teamMap);
+  startGame(io, roomId, teamMap);
 }
 
 function restartGame(io, roomId) {
@@ -89,11 +120,9 @@ function restartGame(io, roomId) {
   room.trick = [];
   room.trumpSuit = null;
   room.deck = null;
+  delete room.teamMap;
 
   io.to(roomId).emit("game-restarted");
-
-  // Immediately start new game
-  startGame(io, roomId);
 }
 
 module.exports = { startGame, restartRound, restartGame };

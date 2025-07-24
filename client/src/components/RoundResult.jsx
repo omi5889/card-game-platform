@@ -1,11 +1,11 @@
 import React from "react";
 import { socket } from "../socket";
 
-export default function RoundResult({ roomId, roundResult }) {
+export default function RoundResult({ roomId, roundResult, teamMap }) {
   if (!roundResult) return null;
 
   const handleNextRound = () => {
-    socket.emit("restart-round", { roomId });
+    socket.emit("restart-round", { roomId, teamMap });
   };
 
   const handleRestartGame = () => {
