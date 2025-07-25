@@ -46,11 +46,15 @@ export default function Room() {
       setIsGameStarted(true);
     });
     socket.on("test-event", () => setTestFlag((prev) => !prev));
+    socket.on("invalid-move", (msg) => {
+      alert(msg); // Or show a red toast/error message in UI
+    });
 
     return () => {
       socket.off("deal-cards");
       socket.off("game-started");
       socket.off("test-event");
+      socket.off("invalid-move");
     };
   }, []);
 

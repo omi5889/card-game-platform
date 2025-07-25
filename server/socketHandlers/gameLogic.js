@@ -19,6 +19,22 @@ function playCard(socket, io, roomId, card) {
 
   const cardIndex = hand.indexOf(card);
   if (cardIndex === -1) return;
+
+  // 🟨 If it's not the first card in the trick, enforce follow-suit
+  if (room.trick.length > 0) {
+    const leadSuit = getSuit(room.trick[0].card);
+    const cardSuit = getSuit(card);
+
+    const hasLeadSuit = hand.some((c) => getSuit(c) === leadSuit);
+
+    if (cardSuit !== leadSuit && hasLeadSuit) {
+      // ❌ Player tried to play wrong suit when they had the lead suit
+      socket.emit("invalid-move", "You must follow the lead suit.");
+      return;
+    }
+  }
+
+  // ✅ Remove card from hand
   hand.splice(cardIndex, 1);
   io.to(socket.id).emit("update-hand", hand);
 
