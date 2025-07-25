@@ -21,6 +21,10 @@ const { join } = require("path");
 const app = express();
 app.use(cors());
 
+app.get("/backendHealth", (req, res) => {
+  res.send("Card game backend is running.");
+});
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
